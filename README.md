@@ -1,2 +1,3 @@
-# StokerCheatConsole
-Cheat Console for Mod Testing in Monster Train
+# Stoker
+
+Cheat Manager and Console
