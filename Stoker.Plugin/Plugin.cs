@@ -19,7 +19,7 @@ using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+using Stoker.Plugin.Console;
 
 namespace Stoker.Plugin
 {
@@ -27,21 +27,23 @@ namespace Stoker.Plugin
     public class Plugin : BaseUnityPlugin
     {
         internal static new ManualLogSource Logger = new(MyPluginInfo.PLUGIN_GUID);
+
         public void Awake()
         {
             // Plugin startup logic
             Logger = base.Logger;
-
-            var builder = Railhead.GetBuilder();
-            builder.Configure(
-                MyPluginInfo.PLUGIN_GUID,
-                c =>
-                {
-                    c.AddJsonFile("plugin.json");
-                }
-            );
-
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+
+            // Create console
+            CreateConsole();
+        }
+
+        private void CreateConsole()
+        {
+            // Create the console GameObject
+            var consoleObject = new GameObject("StokerConsole");
+            consoleObject.AddComponent<StokerConsole>();
+            DontDestroyOnLoad(consoleObject);
         }
     }
 }
