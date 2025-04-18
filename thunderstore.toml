@@ -6,7 +6,7 @@ namespace = "MT2"
 name = "Stoker"
 versionNumber = "0.0.2"
 description = "Cheat Manager and Console"
-websiteUrl = "https://thunderstore.io"
+websiteUrl = "https://github.com/Monster-Train-2-Modding-Group/StokerCheatConsole"
 containsNsfwContent = false
 
 [package.dependencies]
