@@ -1,11 +1,14 @@
 using System.Text;
-using Stoker.Plugin.Interfaces;
-using Stoker.Plugin.Impl;
+using Stoker.Base.Interfaces;
+using Stoker.Base.Impl;
+using TrainworksReloaded.Core.Interfaces;
+using TrainworksReloaded.Core;
 
-namespace Stoker.Plugin.Extension
+namespace Stoker.Base.Extension
 {
     public static class CommandExtension
     {
+        private static Lazy<ConsoleLogger> LoggerLazy { get; set; } = new(() => Railend.GetContainer().GetInstance<ConsoleLogger>());
         /// <summary>
         /// Adds standard help options (-h, --help) to a command.
         /// When these options are used, the command's help text will be displayed and the command will exit.
@@ -38,7 +41,7 @@ namespace Stoker.Plugin.Extension
                 {
                     if (args.Options.ContainsKey("help") && args.Options["help"] is bool showHelp && showHelp)
                     {
-                        System.Console.WriteLine(command.GetCommandHelpString());
+                        LoggerLazy.Value.Log(command.GetCommandHelpString());
                     }
                     return Task.CompletedTask;
                 });
@@ -49,7 +52,7 @@ namespace Stoker.Plugin.Extension
                 {
                     if (args.Options.ContainsKey("help") && args.Options["help"] is bool showHelp && showHelp)
                     {
-                        System.Console.WriteLine(command.GetCommandHelpString());
+                        LoggerLazy.Value.Log(command.GetCommandHelpString());
                         return;
                     }
 
@@ -156,6 +159,23 @@ namespace Stoker.Plugin.Extension
             }
             stringBuilder.AppendLine($"  {command.GetCommandUsage()}");
 
+            if (command.Arguments.Any())
+            {
+                stringBuilder.AppendLine();
+                stringBuilder.AppendLine("Arguments:");
+                foreach (var argument in command.Arguments)
+                {
+                    if (string.IsNullOrEmpty(argument.DefaultValue))
+                    {
+                        stringBuilder.AppendLine($"  {argument.Name, -30} {argument.Description}");
+                    }
+                    else
+                    {
+                        stringBuilder.AppendLine($"  {argument.Name, -30} {argument.Description}  [default: {argument.DefaultValue}]");
+                    }
+                }
+            }
+
             // Add options section if there are any options
             if (command.Options.Any())
             {
@@ -166,7 +186,14 @@ namespace Stoker.Plugin.Extension
                     var aliases = option.Aliases.Select(a => $"-{a}").ToList();
                     aliases.Add($"--{option.Name}");
                     var optionString = string.Join(", ", aliases);
-                    stringBuilder.AppendLine($"  {optionString,-30} {option.Description}  [default: {option.DefaultValue}]");
+                    if (string.IsNullOrEmpty(option.DefaultValue))
+                    {
+                        stringBuilder.AppendLine($"  {optionString,-30} {option.Description}");
+                    }
+                    else
+                    {
+                        stringBuilder.AppendLine($"  {optionString,-30} {option.Description}  [default: {option.DefaultValue}]");
+                    }
                 }
             }
 

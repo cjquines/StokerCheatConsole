@@ -20,6 +20,9 @@ using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using Stoker.Plugin.Console;
+using Stoker.Base.Impl;
+using Stoker.Base.Commands;
+using Stoker.Base;
 
 namespace Stoker.Plugin
 {
@@ -27,22 +30,41 @@ namespace Stoker.Plugin
     public class Plugin : BaseUnityPlugin
     {
         internal static new ManualLogSource Logger = new(MyPluginInfo.PLUGIN_GUID);
-
         public void Awake()
         {
             // Plugin startup logic
             Logger = base.Logger;
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
-            // Create console
-            CreateConsole();
+            var rootCommandExecutor = new RootCommandExecutor();
+            rootCommandExecutor.TryAddCommand(HelpCommandFactory.Create(rootCommandExecutor));
+            rootCommandExecutor.TryAddCommand(CardCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(EchoCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(GoldCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(RelicCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(HandCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(PyreCommandFactory.Create());
+
+            Railend.ConfigurePreAction(c =>
+            {
+                c.RegisterInstance(rootCommandExecutor);
+                c.RegisterInstance(new ConsoleLogger(Logger));
+            });
+
+            var config = Config.Bind("Console", "Enabled", true, "Enable the console");
+            if (config.Value)
+            {
+                // Create console
+                CreateConsole(rootCommandExecutor);
+            }
         }
 
-        private void CreateConsole()
+        private void CreateConsole(RootCommandExecutor rootCommandExecutor)
         {
             // Create the console GameObject
             var consoleObject = new GameObject("StokerConsole");
-            consoleObject.AddComponent<StokerConsole>();
+            var stokerConsole = consoleObject.AddComponent<StokerConsole>();
+            stokerConsole.CommandExecutor = rootCommandExecutor;
             DontDestroyOnLoad(consoleObject);
         }
     }

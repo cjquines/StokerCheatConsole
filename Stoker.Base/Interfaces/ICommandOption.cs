@@ -1,15 +1,18 @@
-namespace Stoker.Plugin.Interfaces
+namespace Stoker.Base.Interfaces
 {
-    public interface IArgument
+    public interface ICommandOption
     {
         string Name { get; }
         string Description { get; }
+        bool IsRequired { get; }
         string DefaultValue { get; }
         IEnumerable<string> Suggestions { get; }
+        IEnumerable<string> Aliases { get; }
         object? Parse(string value);
+        Type Type { get; }
     }
 
-    public interface IArgument<T> : IArgument
+    public interface ICommandOption<T> : ICommandOption
     {
         new T? Parse(string value);
     }

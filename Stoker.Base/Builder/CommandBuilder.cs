@@ -1,9 +1,9 @@
-using Stoker.Plugin.Data;
-using Stoker.Plugin.Extension;
-using Stoker.Plugin.Impl;
-using Stoker.Plugin.Interfaces;
+using Stoker.Base.Data;
+using Stoker.Base.Extension;
+using Stoker.Base.Impl;
+using Stoker.Base.Interfaces;
 
-namespace Stoker.Plugin.Builder
+namespace Stoker.Base.Builder
 {
     /// <summary>
     /// A fluent builder for creating and configuring commands.
@@ -44,13 +44,13 @@ namespace Stoker.Plugin.Builder
             return this;
         }
 
-        public ArgumentBuilder<string> WithArgument(string name){
-            var argument = new Argument<string>
+        public ArgumentBuilder<T> WithArgument<T>(string name){
+            var argument = new Argument<T>
             {
                 Name = name
             };
             _command.AddArgument(argument);
-            return new ArgumentBuilder<string>(this, argument);
+            return new ArgumentBuilder<T>(this, argument);
         }
 
         /// <summary>

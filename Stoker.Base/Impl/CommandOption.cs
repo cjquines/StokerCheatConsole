@@ -1,7 +1,7 @@
 
-using Stoker.Plugin.Interfaces;
+using Stoker.Base.Interfaces;
 
-namespace Stoker.Plugin.Impl
+namespace Stoker.Base.Impl
 {
     public class CommandOption<T> : ICommandOption<T>
     {
@@ -22,6 +22,8 @@ namespace Stoker.Plugin.Impl
 
             return Parser.Invoke(value);
         }
+
+        public Type Type => typeof(T);
 
         object? ICommandOption.Parse(string value)
         {

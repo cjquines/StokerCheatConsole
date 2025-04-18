@@ -1,7 +1,6 @@
-using Stoker.Plugin.Impl;
-using Stoker.Plugin.Interfaces;
+using Stoker.Base.Interfaces;
 
-namespace Stoker.Plugin.Builder
+namespace Stoker.Base.Impl
 {
     /// <summary>
     /// A fluent builder for creating command options.
@@ -17,23 +16,14 @@ namespace Stoker.Plugin.Builder
     /// </summary>
     public class OptionBuilder<T>
     {
-        private readonly CommandBuilder parentBuilder;
-
         private readonly CommandOption<T> _option;
 
-        public OptionBuilder(CommandBuilder parentBuilder, string name)
+        public OptionBuilder(string name)
         {
             _option = new CommandOption<T>
             {
                 Name = name
             };
-            this.parentBuilder = parentBuilder;
-        }
-
-        public OptionBuilder(CommandBuilder parentBuilder, CommandOption<T> option)
-        {
-            _option = option;
-            this.parentBuilder = parentBuilder;
         }
 
         /// <summary>
@@ -79,11 +69,6 @@ namespace Stoker.Plugin.Builder
         {
             _option.IsRequired = true;
             return this;
-        }
-
-        public CommandBuilder Parent()
-        {
-            return parentBuilder;
         }
 
         /// <summary>

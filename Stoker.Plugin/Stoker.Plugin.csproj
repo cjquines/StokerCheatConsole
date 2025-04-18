@@ -15,7 +15,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
-    <PackageReference Include="TrainworksReloaded.Base" Version="0.2.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Stoker.Base\Stoker.Base.csproj" />
+  </ItemGroup>
 </Project>

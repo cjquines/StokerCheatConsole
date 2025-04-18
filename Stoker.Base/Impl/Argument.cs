@@ -1,6 +1,6 @@
-using Stoker.Plugin.Interfaces;
+using Stoker.Base.Interfaces;
 
-namespace Stoker.Plugin.Impl
+namespace Stoker.Base.Impl
 {
     public class Argument<T> : IArgument<T> 
     {
@@ -25,5 +25,7 @@ namespace Stoker.Plugin.Impl
         {
             return Parse(value);
         }
+
+        public Type Type => typeof(T);
     }
 }

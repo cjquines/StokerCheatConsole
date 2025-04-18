@@ -1,7 +1,7 @@
-using Stoker.Plugin.Impl;
-using Stoker.Plugin.Interfaces;
+using Stoker.Base.Impl;
+using Stoker.Base.Interfaces;
 
-namespace Stoker.Plugin.Builder
+namespace Stoker.Base.Builder
 {
     /// <summary>
     /// A fluent builder for creating command arguments.
