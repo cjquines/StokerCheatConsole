@@ -247,6 +247,15 @@ namespace Stoker.Base.Impl
                 completions.UnionWith(currentArgument.Suggestions);
             }
 
+            var pastArgIndex = currentArgIndex - 1;
+            if (!isOption && pastArgIndex >= 0 && pastArgIndex < Arguments.Count)
+            {
+                var pastArgument = Arguments[pastArgIndex];
+                completions
+                    .UnionWith(pastArgument.Suggestions
+                    .Where(s => s != lastArg && s.StartsWith(lastArg, StringComparison.OrdinalIgnoreCase)));
+            }
+
             // Handle option completion
             if (isOption)
             {

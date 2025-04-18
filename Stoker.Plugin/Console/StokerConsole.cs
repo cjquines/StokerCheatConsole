@@ -265,7 +265,7 @@ namespace Stoker.Plugin.Console
                     
                     // Only show tab completion if we have completions and aren't actively cycling
                     if (completions.Count > 0)
-                    {
+                    { 
                         var lastSpaceIndex = inputText.LastIndexOf(" ");
                         var baseText = lastSpaceIndex > -1 ? inputText[..(lastSpaceIndex + 1)] : inputText + " ";
                         bool found = false;
