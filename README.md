@@ -1,6 +1,6 @@
 # Stoker
 
-![Cheat Screen](CheatScreen.png)
+![Stoker](https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/StokerCheatConsole/main/CheatScreen.png)
 
 A powerful cheat manager and console for Monster Train 2.
 
