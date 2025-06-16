@@ -44,6 +44,9 @@ namespace Stoker.Plugin
             rootCommandExecutor.TryAddCommand(RelicCommandFactory.Create());
             rootCommandExecutor.TryAddCommand(HandCommandFactory.Create());
             rootCommandExecutor.TryAddCommand(PyreCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(EventCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(UpgradeCommandFactory.Create());
+            rootCommandExecutor.TryAddCommand(NodeCommandFactory.Create()); // Need to reload save to see changes
 
             Railend.ConfigurePreAction(c =>
             {

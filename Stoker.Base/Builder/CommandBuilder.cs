@@ -53,6 +53,17 @@ namespace Stoker.Base.Builder
             return new ArgumentBuilder<T>(this, argument);
         }
 
+        public ArgumentBuilder<string> WithSimpleNameArg()
+        {
+            var argument = new Argument<string>
+            {
+                Name = "name"
+            };
+            _command.AddArgument(argument);
+            _command.simpleNameArg = true;
+            return new ArgumentBuilder<string>(this, argument);
+        }
+
         /// <summary>
         /// Adds an option to the command.
         /// </summary>

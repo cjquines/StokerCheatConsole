@@ -4,6 +4,7 @@ using Stoker.Base.Builder;
 using Stoker.Base.Extension;
 using Stoker.Base.Impl;
 using Stoker.Base.Interfaces;
+using System.Reflection;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Enum;
@@ -21,9 +22,23 @@ namespace Stoker.Base.Commands
                 .WithDescription("Manage cards")
                 .WithSubCommand("add")
                     .WithDescription("Add a card to the deck")
-                    .WithArgument<string>("name")
+                    .WithSimpleNameArg()
                         .WithDescription("The name of the card to add")
-                        .WithSuggestions(() => [.. Railend.GetContainer().GetInstance<IRegister<CardData>>().GetAllIdentifiers(RegisterIdentifierType.ReadableID).Select(c => c.ToString())])
+                        .WithSuggestions(() =>
+                        {
+                            Type type = typeof(CheatManager);
+                            FieldInfo field = type.GetField("allGameData", BindingFlags.NonPublic | BindingFlags.Static);
+
+                            if (field != null)
+                            {
+                                AllGameData allGameData = field.GetValue(null) as AllGameData;
+                                if (allGameData != null)
+                                {
+                                    return allGameData.GetAllCardData().Select(s => s.Cheat_GetNameEnglish()).ToArray();
+                                }
+                            }
+                            return [];
+                        })
                         .WithParser((xs) => xs)
                         .Parent()
                     .SetHandler((args) =>
@@ -120,7 +135,7 @@ namespace Stoker.Base.Commands
                         .Parent()
                     .WithOption<int>("page-size")
                         .WithDescription("The number of cards to list per page")
-                        .WithDefaultValue("10")
+                        .WithDefaultValue("50")
                         .WithAliases("ps")
                         .WithParser((xs) => int.Parse(xs))
                         .Parent()
@@ -135,14 +150,14 @@ namespace Stoker.Base.Commands
                             throw new Exception("Invalid --page option");
                         if (options["page-size"] is not int pageSize)
                             throw new Exception("Invalid --page-size option");
-                        var cards = Railend.GetContainer().GetInstance<IRegister<CardData>>().GetAllIdentifiers(RegisterIdentifierType.ReadableID);
+                        var cards = Railend.GetContainer().GetInstance<IRegister<CardData>>();
                         var startIndex = (page - 1) * pageSize;
                         var endIndex = startIndex + pageSize;
                         var pageCards = cards.Skip(startIndex).Take(pageSize);
                         LoggerLazy.Value.Log("Cards:");
                         foreach (var card in pageCards)
                         {
-                            LoggerLazy.Value.Log($"  {card}");
+                            LoggerLazy.Value.Log($"{card.Value.Cheat_GetNameEnglish()} : {card.Value.name}");
                         }
                         return Task.CompletedTask;
                     })

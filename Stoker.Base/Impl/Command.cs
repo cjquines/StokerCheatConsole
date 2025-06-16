@@ -11,6 +11,7 @@ namespace Stoker.Base.Impl
         public List<ICommandOption> Options { get; set; } = [];
         public List<ICommand> SubCommands { get; set; } = [];
         public Func<HandlerArgs, Task>? Handler { get; set; } = null;
+        public bool simpleNameArg { get; set; } = false;
 
         IEnumerable<IArgument> ICommand.Arguments => Arguments;
 
@@ -38,6 +39,13 @@ namespace Stoker.Base.Impl
             var handlerArgs = new HandlerArgs();
             var argumentIndex = 0;
             var processedOptions = new HashSet<string>();
+
+            //No need to parse just accept the string with spaces for easy logical name input
+            if(simpleNameArg)
+            {
+                handlerArgs.Arguments.Add("name", string.Join(" ", args));
+                return handlerArgs;
+            }
 
             //Add default values for all options with a default value
             foreach (var option in Options)
