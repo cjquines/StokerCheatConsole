@@ -2,10 +2,8 @@ using HarmonyLib;
 using ShinyShoe.Loading;
 using Stoker.Base.Builder;
 using Stoker.Base.Extension;
-using Stoker.Base.Impl;
 using Stoker.Base.Interfaces;
 using System.Reflection;
-using TrainworksReloaded.Base;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
@@ -31,10 +29,10 @@ namespace Stoker.Base.Commands
 
                             if (field != null)
                             {
-                                AllGameData allGameData = field.GetValue(null) as AllGameData;
+                                AllGameData? allGameData = field.GetValue(null) as AllGameData;
                                 if (allGameData != null)
                                 {
-                                    return allGameData.GetAllCardData().Select(s => s.Cheat_GetNameEnglish()).ToArray();
+                                    return [.. allGameData.GetAllCardData().Select(s => s.Cheat_GetNameEnglish())];
                                 }
                             }
                             return [];
@@ -105,9 +103,23 @@ namespace Stoker.Base.Commands
                     .Parent()
                 .WithSubCommand("remove")
                     .WithDescription("Remove a card from the deck")
-                    .WithArgument<string>("name")
+                    .WithSimpleNameArg()
                         .WithDescription("The name of the card to remove")
-                        .WithSuggestions(() => [.. Railend.GetContainer().GetInstance<IRegister<CardData>>().GetAllIdentifiers(RegisterIdentifierType.ReadableID).Select(c => c.ToString())])
+                        .WithSuggestions(() =>
+                        {
+                            Type type = typeof(CheatManager);
+                            FieldInfo field = type.GetField("saveManager", BindingFlags.NonPublic | BindingFlags.Static);
+
+                            if (field != null)
+                            {
+                                SaveManager? saveManager = field.GetValue(null) as SaveManager;
+                                if (saveManager != null)
+                                {
+                                    return [.. saveManager.GetDeckState().Select(s => s.GetTitleKey().LocalizeEnglish(true, null))];
+                                }
+                            }
+                            return [];
+                        })
                         .WithParser((xs) => xs)
                         .Parent()
                     .SetHandler((args) =>

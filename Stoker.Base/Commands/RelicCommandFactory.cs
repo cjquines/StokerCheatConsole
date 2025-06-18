@@ -5,7 +5,6 @@ using Stoker.Base.Extension;
 using Stoker.Base.Interfaces;
 using System.Reflection;
 using TrainworksReloaded.Core;
-using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace Stoker.Base.Commands;
@@ -28,10 +27,10 @@ public class RelicCommandFactory
 
                         if (field != null)
                         {
-                            AllGameData allGameData = field.GetValue(null) as AllGameData;
+                            AllGameData? allGameData = field.GetValue(null) as AllGameData;
                             if (allGameData != null)
                             {
-                                return allGameData.GetAllCollectableRelicData().Select(s => s.Cheat_GetNameEnglish()).ToArray();
+                                return [.. allGameData.GetAllCollectableRelicData().Select(s => s.Cheat_GetNameEnglish())];
                             }
                         }
                         return [];
@@ -55,9 +54,23 @@ public class RelicCommandFactory
                 .Parent()
             .WithSubCommand("remove")
                 .WithDescription("Remove a relic from the deck")
-                .WithArgument<string>("name")
+                .WithSimpleNameArg()
                     .WithDescription("The name of the relic to remove")
-                    .WithSuggestions(() => [.. Railend.GetContainer().GetInstance<IRegister<RelicData>>().Select(c => c.Value.name)])
+                    .WithSuggestions(() =>
+                    {
+                        Type type = typeof(CheatManager);
+                        FieldInfo field = type.GetField("saveManager", BindingFlags.NonPublic | BindingFlags.Static);
+
+                        if (field != null)
+                        {
+                            SaveManager? saveManager = field.GetValue(null) as SaveManager;
+                            if (saveManager != null)
+                            {
+                                return [.. saveManager.GetAllRelics().Select(s => s.GetSourceRelicData().Cheat_GetNameEnglish())];
+                            }
+                        }
+                        return [];
+                    })
                     .WithParser((xs) => xs)
                     .Parent()
                 .SetHandler((args) =>

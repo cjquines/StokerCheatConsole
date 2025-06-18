@@ -1,14 +1,9 @@
 ﻿using HarmonyLib;
-using ShinyShoe.Loading;
 using Stoker.Base.Builder;
 using Stoker.Base.Extension;
-using Stoker.Base.Impl;
 using Stoker.Base.Interfaces;
 using System.Reflection;
-using TrainworksReloaded.Base;
 using TrainworksReloaded.Core;
-using TrainworksReloaded.Core.Enum;
-using TrainworksReloaded.Core.Interfaces;
 
 namespace Stoker.Base.Commands
 {
@@ -31,10 +26,10 @@ namespace Stoker.Base.Commands
 
                             if (field != null)
                             {
-                                AllGameData allGameData = field.GetValue(null) as AllGameData;
+                                AllGameData? allGameData = field.GetValue(null) as AllGameData;
                                 if (allGameData != null)
                                 {
-                                    return allGameData.GetAllStoryEventData().Select(s => s.name).ToArray();
+                                    return [.. allGameData.GetAllStoryEventData().Select(s => s.name)];
                                 }
                             }
                             return [];
@@ -65,10 +60,10 @@ namespace Stoker.Base.Commands
 
                         if (field != null)
                         {
-                            AllGameData allGameData = field.GetValue(null) as AllGameData;
+                            AllGameData? allGameData = field.GetValue(null) as AllGameData;
                             if (allGameData != null)
                             {
-                                List<String> names = allGameData.GetAllStoryEventData().Select(s => s.name).ToList();
+                                List<String> names = [.. allGameData.GetAllStoryEventData().Select(s => s.name)];
                                 names.Sort();
                                 names.ForEach(s => LoggerLazy.Value.Log(s));
                             }
