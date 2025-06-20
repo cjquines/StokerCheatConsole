@@ -13,7 +13,7 @@
     <PackageReference Include="TrainworksReloaded.Base" Version="0.4.6" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy &quot;$(ProjectDir)\bin\Debug\netstandard2.1\*.*&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Monster Train 2\BepInEx\plugins\MT2-Stoker&quot; /Y /I /E" />
-  </Target>
+  </Target>-->
 </Project>
