@@ -15,7 +15,7 @@ namespace Stoker.Base.Commands
         {
             var command = new CommandBuilder("upgrade")
                 .WithDescription("Manage ugprades")
-                .WithSubCommand("card")
+                .WithSubCommand("add")
                 .WithDescription("Apply an upgrade to a card")
                     .WithSimpleNameArg()
                         .WithDescription("The name of the upgrade to apply")
@@ -63,7 +63,7 @@ namespace Stoker.Base.Commands
                             AllGameData? allGameData = field.GetValue(null) as AllGameData;
                             if (allGameData != null)
                             {
-                                List<String> names = [.. allGameData.GetAllEnhancerData().Select(s => s.Cheat_GetNameEnglish() + " : " + s.name)];
+                                List<String> names = [.. allGameData.GetAllEnhancerData().Select(s => s.Cheat_GetNameEnglish())];
                                 names.Sort();
                                 names.ForEach(s => LoggerLazy.Value.Log(s));
                             }

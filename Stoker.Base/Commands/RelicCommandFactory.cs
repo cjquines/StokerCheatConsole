@@ -113,14 +113,26 @@ public class RelicCommandFactory
                         throw new Exception("Invalid --page option");
                     if (options["page-size"] is not int pageSize)
                         throw new Exception("Invalid --page-size option");
-                    var relics = Railend.GetContainer().GetInstance<IRegister<RelicData>>();
-                    var startIndex = (page - 1) * pageSize;
-                    var endIndex = startIndex + pageSize;
-                    var pageRelics = relics.Skip(startIndex).Take(pageSize);
-                    LoggerLazy.Value.Log("Relics:");
-                    foreach (var relic in pageRelics)
+
+                    Type type = typeof(CheatManager);
+                    FieldInfo field = type.GetField("allGameData", BindingFlags.NonPublic | BindingFlags.Static);
+
+                    if (field != null)
                     {
-                        LoggerLazy.Value.Log($"{relic.Value.Cheat_GetNameEnglish()} : {relic.Value.name}");
+                        AllGameData? allGameData = field.GetValue(null) as AllGameData;
+                        if (allGameData != null)
+                        {
+                            List<CollectableRelicData> relics = allGameData.GetAllCollectableRelicData().ToList();
+                            relics.Sort((a, b) => string.Compare(a.Cheat_GetNameEnglish(), b.Cheat_GetNameEnglish(), StringComparison.OrdinalIgnoreCase));
+                            var startIndex = (page - 1) * pageSize;
+                            var endIndex = startIndex + pageSize;
+                            var pageRelics = relics.Skip(startIndex).Take(pageSize);
+                            LoggerLazy.Value.Log("Relics:");
+                            foreach (var relic in pageRelics)
+                            {
+                                LoggerLazy.Value.Log($"{relic.Cheat_GetNameEnglish()}");
+                            }
+                        }
                     }
                     return Task.CompletedTask;
                 })

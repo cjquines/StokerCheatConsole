@@ -162,15 +162,30 @@ namespace Stoker.Base.Commands
                             throw new Exception("Invalid --page option");
                         if (options["page-size"] is not int pageSize)
                             throw new Exception("Invalid --page-size option");
-                        var cards = Railend.GetContainer().GetInstance<IRegister<CardData>>();
-                        var startIndex = (page - 1) * pageSize;
-                        var endIndex = startIndex + pageSize;
-                        var pageCards = cards.Skip(startIndex).Take(pageSize);
-                        LoggerLazy.Value.Log("Cards:");
-                        foreach (var card in pageCards)
+
+
+                        Type type = typeof(CheatManager);
+                        FieldInfo field = type.GetField("allGameData", BindingFlags.NonPublic | BindingFlags.Static);
+
+                        if (field != null)
                         {
-                            LoggerLazy.Value.Log($"{card.Value.Cheat_GetNameEnglish()} : {card.Value.name}");
+                            AllGameData? allGameData = field.GetValue(null) as AllGameData;
+                            if (allGameData != null)
+                            {
+                                List<CardData> cards = allGameData.GetAllCardData().ToList();
+                                cards.FindAll(c => c.IsUnitAbility()).ForEach(c => cards.Remove(c)); // Remove unit abilities
+                                cards.Sort((x, y) => string.Compare(x.Cheat_GetNameEnglish(), y.Cheat_GetNameEnglish(), StringComparison.OrdinalIgnoreCase));
+                                var startIndex = (page - 1) * pageSize;
+                                var endIndex = startIndex + pageSize;
+                                var pageCards = cards.Skip(startIndex).Take(pageSize);
+                                LoggerLazy.Value.Log("Cards:");
+                                foreach (var card in pageCards)
+                                {
+                                    LoggerLazy.Value.Log($"{card.Cheat_GetNameEnglish()}");
+                                }
+                            }
                         }
+
                         return Task.CompletedTask;
                     })
                     .UseHelpMiddleware()
