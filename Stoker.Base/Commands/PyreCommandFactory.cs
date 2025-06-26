@@ -13,7 +13,7 @@ public static class PyreCommandFactory
             .WithDescription("Do things to the Pyre")
             .WithSubCommand("health")
                 .WithDescription("Adjust the Pyre's health")
-                .WithArgument<string>("amount")
+                .WithArgument<string>("health")
                     .WithDescription("The amount to adjust the Pyre's health")
                     .WithSuggestions(() => [.. new[] { "+50", "-50", "50" }])
                     .WithParser((xs) => xs)
